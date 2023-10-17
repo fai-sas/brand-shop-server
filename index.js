@@ -55,6 +55,7 @@ async function run() {
         $set: {
           image: updatedBrand.image,
           name: updatedBrand.name,
+          brandName: updatedBrand.brandName,
           type: updatedBrand.type,
           price: updatedBrand.price,
           rating: updatedBrand.rating,

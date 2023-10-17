@@ -45,6 +45,26 @@ async function run() {
       res.send(result)
     })
 
+    app.put('/brands/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const options = { upsert: true }
+      const updatedBrand = req.body
+
+      const brand = {
+        $set: {
+          image: updatedBrand.image,
+          name: updatedBrand.name,
+          type: updatedBrand.type,
+          price: updatedBrand.price,
+          rating: updatedBrand.rating,
+        },
+      }
+
+      const result = await brandCollection.updateOne(query, brand, options)
+      res.send(result)
+    })
+
     app.delete('/brands/:id', async (req, res) => {
       const id = req.params.id
       const query = { _id: new ObjectId(id) }

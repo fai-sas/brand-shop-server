@@ -26,6 +26,7 @@ async function run() {
     await client.connect()
 
     const brandCollection = client.db('brandShop').collection('brands')
+    const userCollection = client.db('brandShop').collection('users')
 
     app.get('/brands', async (req, res) => {
       const result = await brandCollection.find().toArray()
@@ -40,8 +41,8 @@ async function run() {
     })
 
     app.post('/brands', async (req, res) => {
-      const newBrand = req.body
-      const result = await brandCollection.insertOne(newBrand)
+      const newProduct = req.body
+      const result = await brandCollection.insertOne(newProduct)
       res.send(result)
     })
 
@@ -53,12 +54,12 @@ async function run() {
 
       const brand = {
         $set: {
-          image: updatedBrand.image,
           name: updatedBrand.name,
           brandName: updatedBrand.brandName,
           type: updatedBrand.type,
           price: updatedBrand.price,
           rating: updatedBrand.rating,
+          image: updatedBrand.image,
         },
       }
 
@@ -70,6 +71,38 @@ async function run() {
       const id = req.params.id
       const query = { _id: new ObjectId(id) }
       const result = await brandCollection.deleteOne(query)
+      res.send(result)
+    })
+
+    // user related endpoints
+    app.get('/user', async (req, res) => {
+      const cursor = userCollection.find()
+      const users = await cursor.toArray()
+      res.send(users)
+    })
+
+    app.post('/user', async (req, res) => {
+      const user = req.body
+      const result = await userCollection.insertOne(user)
+      res.send(result)
+    })
+
+    app.patch('/user', async (req, res) => {
+      const user = req.body
+      const query = { email: user.email }
+      const updateDoc = {
+        $set: {
+          lastLoggedAt: user.lastLoggedAt,
+        },
+      }
+      const result = await userCollection.updateOne(query, updateDoc)
+      res.send(result)
+    })
+
+    app.delete('/user/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const result = await userCollection.deleteOne(query)
       res.send(result)
     })
 

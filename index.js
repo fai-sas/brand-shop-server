@@ -23,10 +23,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect()
+    // await client.connect()
 
     const brandCollection = client.db('brandShop').collection('brands')
     const userCollection = client.db('brandShop').collection('users')
+    const addedProductCollection = client
+      .db('brandShop')
+      .collection('addedProducts')
 
     app.get('/brands', async (req, res) => {
       const result = await brandCollection.find().toArray()
@@ -103,6 +106,33 @@ async function run() {
       const id = req.params.id
       const query = { _id: new ObjectId(id) }
       const result = await userCollection.deleteOne(query)
+      res.send(result)
+    })
+
+    // att to cart related endpoints
+
+    app.get('/addedproducts', async (req, res) => {
+      const result = await addedProductCollection.find().toArray()
+      res.send(result)
+    })
+
+    app.get('/addedproducts/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const result = await addedProductCollection.findOne(query)
+      res.send(result)
+    })
+
+    app.post('/addedproducts', async (req, res) => {
+      const newProduct = req.body
+      const result = await addedProductCollection.insertOne(newProduct)
+      res.send(result)
+    })
+
+    app.delete('/addedproducts/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const result = await addedProductCollection.deleteOne(query)
       res.send(result)
     })
 
